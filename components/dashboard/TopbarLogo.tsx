@@ -4,7 +4,7 @@ import Link from "next/link";
 export function TopBarLogo() {
   return (
     <Link
-      href="/dashboard"
+      href="/dashboard/targets"
       className="flex items-center gap-2 group select-none"
     >
       <div className="flex justify-center">

@@ -13,7 +13,7 @@ export const useVerifyEmailMutation = () => {
     onSuccess: () => {
       toast.success("Email verified successfully!");
       sessionStorage.removeItem("verificationEmail");
-      router.push("/dashboard");
+      router.push("/dashboard/targets");
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error.response?.data?.message || "Verification failed");

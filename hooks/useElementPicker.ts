@@ -43,10 +43,10 @@ function autoNameFromSelector(selector: string): string {
   const s = selector.trim();
   if (!s) return 'field';
 
-  // take last segment after combinators
+  // to take last segment after combinators
   const lastSegment = s.split(/\s+|>|\+|~/).filter(Boolean).pop() ?? s;
 
-  // remove pseudo classes/elements
+  // to remove pseudo classes/elements
   const noPseudo = lastSegment.replace(/:{1,2}[a-zA-Z-]+(\(.+\))?/g, '');
 
   // prefer id
