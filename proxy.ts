@@ -21,12 +21,14 @@ export function proxy(request: NextRequest) {
 
   // Logged in user trying to access auth pages → redirect to dashboard
   if (token && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard/targets", request.url));
   }
 
   // Logged out user trying to access protected pages → redirect to sign-in
   if (!token && isProtectedRoute) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+    const signInUrl = new URL("/sign-in", request.url);
+    signInUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();

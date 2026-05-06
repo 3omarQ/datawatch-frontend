@@ -31,14 +31,14 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="mb-5">
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
+    <Card className="rounded-lg bg-card/85 shadow-sm">
+      <CardHeader className="px-8 pb-3 pt-7">
+        <CardTitle className="text-xl">Create an account</CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-          <Field>
-            <FieldLabel htmlFor="name">Full Name</FieldLabel>
+      <CardContent className="px-8 pb-7">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+          <Field className="gap-2">
+            <FieldLabel htmlFor="name">Full name</FieldLabel>
             <Input
               id="name"
               type="text"
@@ -50,7 +50,7 @@ export function RegisterForm() {
             )}
           </Field>
 
-          <Field>
+          <Field className="gap-2">
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
               id="email"
@@ -65,7 +65,7 @@ export function RegisterForm() {
             )}
           </Field>
 
-          <Field>
+          <Field className="gap-2">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <Input
               id="password"
@@ -79,8 +79,8 @@ export function RegisterForm() {
             )}
           </Field>
 
-          <Field>
-            <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+          <Field className="gap-2">
+            <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
             <Input
               id="confirmPassword"
               type="password"
@@ -95,9 +95,12 @@ export function RegisterForm() {
 
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending ? (
-              <Loader2Icon className="h-4 w-4 animate-spin" />
+              <>
+                <Loader2Icon className="h-4 w-4 animate-spin" />
+                Creating account...
+              </>
             ) : (
-              "Create Account"
+              "Create account"
             )}
           </Button>
 
@@ -107,6 +110,7 @@ export function RegisterForm() {
             <Button
               variant="outline"
               type="button"
+              disabled={isPending}
               onClick={() => authService.socialLogin("google")}
             >
               <FcGoogle className="mr-2 h-4 w-4" />
@@ -115,6 +119,7 @@ export function RegisterForm() {
             <Button
               variant="outline"
               type="button"
+              disabled={isPending}
               onClick={() => authService.socialLogin("github")}
             >
               <FaGithub className="mr-2 h-4 w-4" />
@@ -128,7 +133,7 @@ export function RegisterForm() {
               href="/sign-in"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Login
+              Log in
             </Link>
           </FieldDescription>
         </form>

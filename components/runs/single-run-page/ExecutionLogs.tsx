@@ -15,9 +15,12 @@ interface Props {
 
 export function ExecutionLogs({ logs, isLive }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs.length]);
+    if (isLive) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [logs.length, isLive]);
 
   if (logs.length === 0)
     return <div className="text-sm text-muted-foreground">No logs.</div>;
@@ -47,7 +50,7 @@ export function ExecutionLogs({ logs, isLive }: Props) {
             </span>
           </div>
         ))}
-        <div ref={bottomRef} /> {/* ADD */}
+        <div ref={bottomRef} />
       </div>
     </div>
   );

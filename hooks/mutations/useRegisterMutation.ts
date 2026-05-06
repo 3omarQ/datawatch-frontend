@@ -17,7 +17,13 @@ export const useRegisterMutation = () => {
       router.push("/verify-email");
     },
     onError: (error: AxiosError<ApiError>) => {
-      toast.error(error.response?.data?.message || "Registration failed");
+      const timeoutMessage =
+        "Registration is taking too long. Please try again in a moment.";
+      toast.error(
+        error.code === "ECONNABORTED"
+          ? timeoutMessage
+          : error.response?.data?.message || "Registration failed"
+      );
     },
   });
 };

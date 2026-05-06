@@ -5,6 +5,11 @@ export function RunsPageHeader({ job }: { job: Job }) {
   return (
     <PageHeader
       title="Executions"
+      backHref={`/dashboard/jobs/${job.id}`}
+      breadcrumbs={[
+        { label: "Jobs", href: "/dashboard/jobs" },
+        { label: "Job details", href: `/dashboard/jobs/${job.id}` },
+      ]}
       meta={
         <>
           <span className="text-sm font-semibold text-muted-foreground">

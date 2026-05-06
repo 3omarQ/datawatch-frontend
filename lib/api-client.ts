@@ -1,7 +1,9 @@
 import axios from "axios";
+import { clearAuthSession, redirectToSignIn } from "@/lib/auth-session";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+  timeout: 20000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,8 +28,8 @@ apiClient.interceptors.response.use(
   (error) => {
     const isAuthEndpoint = error.config?.url?.includes("/auth/");
     if (error.response?.status === 401 && !isAuthEndpoint) {
-      localStorage.removeItem("accessToken");
-      window.location.href = "/sign-in";
+      clearAuthSession();
+      redirectToSignIn();
     }
     return Promise.reject(error);
   }

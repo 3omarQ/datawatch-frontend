@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 export interface BreadcrumbItem {
   label: string;
@@ -18,7 +19,7 @@ interface PageHeaderProps {
   title: string;
   // detail page props
   showBackButton?: boolean;
-  backHref?: string;           // explicit back destination
+  backHref?: string; // explicit back destination
   breadcrumbs?: BreadcrumbItem[]; // e.g. [{label:"Jobs",href:"/dashboard/jobs"}, ...]
   meta?: React.ReactNode;
   // list page props
@@ -44,24 +45,6 @@ function BackButton({ href }: { href?: string }) {
   );
 }
 
-function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
-  return (
-    <nav className="flex items-center gap-1 text-xs text-muted-foreground flex-wrap">
-      {items.map((item, i) => (
-        <span key={item.href} className="flex items-center gap-1">
-          {i > 0 && <ChevronRightIcon className="h-3 w-3 shrink-0" />}
-          <Link
-            href={item.href}
-            className="hover:text-foreground transition-colors truncate max-w-[160px]"
-          >
-            {item.label}
-          </Link>
-        </span>
-      ))}
-    </nav>
-  );
-}
-
 function Stats({ stats }: { stats: StatItem[] }) {
   return (
     <div className="flex items-center gap-4">
@@ -75,45 +58,38 @@ function Stats({ stats }: { stats: StatItem[] }) {
   );
 }
 
-export function PageHeader({
-  title,
-  showBackButton,
-  backHref,
-  breadcrumbs,
-  meta,
-  stats,
-  actionLabel,
-  actionHref,
-  actions,
-}: PageHeaderProps) {
+export function PageHeader({ title, showBackButton, backHref, meta, stats, actionLabel, actionHref, actions }: PageHeaderProps) {
   return (
-    <div className="flex items-center gap-3">
-      {showBackButton && <BackButton href={backHref} />}
+    <div className="flex flex-col gap-3">
+      <Breadcrumbs />
+      <div className="flex items-center justify-between gap-4 w-full min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {showBackButton && <BackButton href={backHref} />}
+          <div className="flex flex-col gap-1.5 min-w-0">
+            <span className="font-semibold tracking-tight text-xl text-foreground leading-tight">
+              {title}
+            </span>
+            {meta && (
+              <div className="flex items-center gap-2 flex-wrap">
+                {meta}
+              </div>
+            )}
+            {stats && <Stats stats={stats} />}
+          </div>
+        </div>
 
-      <div className="flex flex-col flex-1 gap-0.5 min-w-0">
-        {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} />
-        )}
-        <span className="font-semibold tracking-tight text-xl text-foreground">
-          {title}
-        </span>
-        {meta && (
-          <div className="flex items-center gap-2 flex-wrap">{meta}</div>
-        )}
-        {stats && <Stats stats={stats} />}
+        <div className="flex items-center gap-2 shrink-0">
+          {actionLabel && actionHref && (
+            <Link href={actionHref}>
+              <Button size="sm" className="gap-1.5">
+                <PlusIcon className="h-3.5 w-3.5" />
+                {actionLabel}
+              </Button>
+            </Link>
+          )}
+          {actions}
+        </div>
       </div>
-
-      {actionLabel && actionHref && (
-        <Link href={actionHref}>
-          <Button size="sm" className="gap-1.5">
-            <PlusIcon className="h-3.5 w-3.5" />
-            {actionLabel}
-          </Button>
-        </Link>
-      )}
-      {actions && (
-        <div className="flex items-center gap-2 shrink-0">{actions}</div>
-      )}
     </div>
   );
 }

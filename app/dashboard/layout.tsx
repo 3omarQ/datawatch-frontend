@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { TopBarWrapper } from "@/components/dashboard/TopBarWrapper";
 import { NotificationsProvider } from "@/components/providers/NotificationProvider";
+import { BreadcrumbProvider } from "@/components/dashboard/shared/BreadcrumbContext";
 
 async function getMe() {
   const cookieStore = await cookies();
@@ -29,7 +30,12 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-background">
       <TopBarWrapper user={user} />
       <NotificationsProvider >
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-8">
+          <BreadcrumbProvider>
+            {children}
+          </BreadcrumbProvider>
+
+        </main>
       </NotificationsProvider>
     </div>
   );

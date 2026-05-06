@@ -31,17 +31,17 @@ export function LoginForm() {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
+    <Card className="rounded-lg bg-card/85 shadow-sm">
+      <CardHeader className="px-8 pb-3 pt-7">
+        <CardTitle className="text-xl">Login to your account</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-8 pb-7">
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          className="space-y-4"
+          className="space-y-5"
         >
-          <Field>
+          <Field className="gap-2">
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
               id="email"
@@ -56,12 +56,12 @@ export function LoginForm() {
             )}
           </Field>
 
-          <Field>
+          <Field className="gap-2">
             <div className="flex items-center justify-between">
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Link
                 href="/forgot-password"
-                className="text-sm underline-offset-4 hover:underline"
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
               >
                 Forgot password?
               </Link>
@@ -80,7 +80,10 @@ export function LoginForm() {
 
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending ? (
-              <Loader2Icon className="h-4 w-4 animate-spin" />
+              <>
+                <Loader2Icon className="h-4 w-4 animate-spin" />
+                Logging in...
+              </>
             ) : (
               "Login"
             )}
@@ -92,6 +95,7 @@ export function LoginForm() {
             <Button
               variant="outline"
               type="button"
+              disabled={isPending}
               onClick={() => authService.socialLogin("google")}
             >
               <FcGoogle className="mr-2 h-4 w-4" />
@@ -100,6 +104,7 @@ export function LoginForm() {
             <Button
               variant="outline"
               type="button"
+              disabled={isPending}
               onClick={() => authService.socialLogin("github")}
             >
               <FaGithub className="mr-2 h-4 w-4" />
@@ -108,7 +113,7 @@ export function LoginForm() {
           </div>
 
           <FieldDescription className="text-center">
-            {"Don't have an account?"}
+            {"Don't have an account? "}
             <Link
               href="/sign-up"
               className="underline underline-offset-4 hover:text-primary"

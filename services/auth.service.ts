@@ -1,5 +1,10 @@
 import apiClient from "@/lib/api-client";
 import {
+  clearAuthSession,
+  redirectToSignIn,
+  setAuthSession,
+} from "@/lib/auth-session";
+import {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
@@ -13,13 +18,7 @@ export const authService = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>("/auth/login", data);
     if (response.data.accessToken) {
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-
-      // also set cookie so middleware(proxy) can read it
-      document.cookie = `accessToken=${
-        response.data.accessToken
-      }; path=/; max-age=${7 * 24 * 60 * 60}`;
+      setAuthSession(response.data.accessToken, response.data.user);
     }
     return response.data;
   },
@@ -39,11 +38,7 @@ export const authService = {
       data
     );
     if (response.data.accessToken) {
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      document.cookie = `accessToken=${
-        response.data.accessToken
-      }; path=/; max-age=${7 * 24 * 60 * 60}`;
+      setAuthSession(response.data.accessToken, response.data.user);
     }
     return response.data;
   },
@@ -76,9 +71,8 @@ export const authService = {
 
   // Logout
   logout: () => {
-    document.cookie = "accessToken=; path=/; max-age=0"; // clear cookie too
-    localStorage.removeItem("accessToken");
-    window.location.href = "/sign-in";
+    clearAuthSession();
+    redirectToSignIn();
   },
 
   // Social auth

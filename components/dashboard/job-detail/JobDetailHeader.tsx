@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileTextIcon, Loader2Icon, PlayIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Job } from "@/types/dashboard.types";
 import apiClient from "@/lib/api-client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useBreadcrumbContext } from "../shared/BreadcrumbContext";
 
 function RunButton({ jobId }: { jobId: string }) {
   const [isRunning, setIsRunning] = useState(false);
@@ -61,11 +62,19 @@ function DeleteDescription({ job }: { job: Job }) {
 export function JobDetailHeader({ job }: { job: Job }) {
   const router = useRouter();
   const hasRuns = job._count.executions > 0;
+  const { setLabel } = useBreadcrumbContext();
+  useEffect(() => {
+    // Replace the raw job ID segment with a human-readable label
+    setLabel(job.id, job.datapoint.name);
+  }, [job.id, job.datapoint.name, setLabel]);
 
   return (
     <PageHeader
       title="Job details"
       showBackButton
+      backHref="/dashboard/jobs"
+      breadcrumbs={[{ label: "Jobs", href: "/dashboard/jobs" }]}
+
       meta={
         <>
           <span className="text-sm font-semibold text-muted-foreground">

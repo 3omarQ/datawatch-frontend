@@ -7,10 +7,10 @@ export function LoginLogo() {
       <Image
         src="/logo.png"
         alt="Company Logo"
-        width={250}
-        height={250}
-        className="select-none"
-        draggable={true}
+        width={220}
+        height={220}
+        className="h-auto w-56 select-none"
+        draggable={false}
         priority
       />
     </div>

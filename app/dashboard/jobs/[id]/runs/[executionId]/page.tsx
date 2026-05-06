@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { executionsService } from "@/services/executions.service";
 import { Separator } from "@/components/ui/separator";
 import { ExecutionHeader } from "@/components/runs/single-run-page/ExecutionHeader";
@@ -26,6 +26,19 @@ export default function ExecutionPage() {
 	const initialLogs = useMemo(() => execution?.logs ?? [], [execution?.logs]);
 	const logs = useExecutionLogs(executionId, initialLogs);
 
+	const wasLiveRef = useRef(false);
+	const resultsRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (wasLiveRef.current && execution?.status !== "RUNNING") {
+			// give React enough time to render the results into the DOM
+			setTimeout(() => {
+				resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+			}, 300);
+		}
+		wasLiveRef.current = execution?.status === "RUNNING";
+	}, [execution?.status]);
+
 	if (isLoading) return <PageLoadingState variant="detail" />;
 	if (isError) return <PageErrorState error={error} onRetry={refetch} />;
 	if (!execution) {
@@ -42,7 +55,9 @@ export default function ExecutionPage() {
 		<div className="space-y-6 pb-16">
 			<ExecutionHeader execution={execution} />
 			<Separator />
-			<ExecutionResult results={execution.results} format={execution.job.outputFormat} />
+			<div ref={resultsRef} className="scroll-mt-24">
+				<ExecutionResult results={execution.results} format={execution.job.outputFormat} />
+			</div>
 			<Separator />
 			<ExecutionLogs logs={logs} isLive={isLive} />
 		</div>
