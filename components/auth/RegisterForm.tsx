@@ -32,17 +32,18 @@ export function RegisterForm() {
 
   return (
     <Card className="rounded-lg bg-card/85 shadow-sm">
-      <CardHeader className="px-8 pb-3 pt-7">
+      <CardHeader className="px-6 pb-2 pt-5">
         <CardTitle className="text-xl">Create an account</CardTitle>
       </CardHeader>
-      <CardContent className="px-8 pb-7">
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+      <CardContent className="px-6 pb-5">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-3">
           <Field className="gap-2">
             <FieldLabel htmlFor="name">Full name</FieldLabel>
             <Input
               id="name"
               type="text"
               placeholder="John Doe"
+              className="h-8"
               {...registerField("name")}
             />
             {errors.name && (
@@ -56,6 +57,7 @@ export function RegisterForm() {
               id="email"
               type="email"
               placeholder="m@example.com"
+              className="h-8"
               {...registerField("email")}
             />
             {errors.email && (
@@ -70,6 +72,7 @@ export function RegisterForm() {
             <Input
               id="password"
               type="password"
+              className="h-8"
               {...registerField("password")}
             />
             {errors.password && (
@@ -84,6 +87,7 @@ export function RegisterForm() {
             <Input
               id="confirmPassword"
               type="password"
+              className="h-8"
               {...registerField("confirmPassword")}
             />
             {errors.confirmPassword && (
@@ -93,7 +97,7 @@ export function RegisterForm() {
             )}
           </Field>
 
-          <Button type="submit" disabled={isPending} className="w-full">
+          <Button type="submit" disabled={isPending} className="w-full" size="sm">
             {isPending ? (
               <>
                 <Loader2Icon className="h-4 w-4 animate-spin" />
@@ -106,7 +110,7 @@ export function RegisterForm() {
 
           <SeparatorWithText text="Or continue with" />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Button
               variant="outline"
               type="button"
