@@ -3,11 +3,10 @@ import { z } from "zod";
 
 export const createJobSchema = z.object({
   // Section 1 - Basics
-  name: z.string().min(1, "Datapoint name is required"),
-  url: z.string().url("Must be a valid URL"),
-  datapointPath: z.string().min(1, "CSS/HTML path is required"),
+  name: z.string().min(1, "Give this datapoint a name so you can find it later."),
+  url: z.string().url("That doesn't look like a valid URL — make sure it starts with https://."),
+  datapointPath: z.string().min(1, "Select an element — use the visual picker or type a CSS selector."),
   fieldNames: z.array(z.string()).optional(),
-
   paginationSelector: z.string().optional(),
   maxPages: z.number().min(2).max(50).optional(),
 
@@ -25,7 +24,6 @@ export const createJobSchema = z.object({
   // Section 4 - Output
   extractorType: z.enum(["smart", "basic"]),
   outputFormat: z.enum(["json", "md", "txt", "csv"]),
-
 });
 
 export type CreateJobFormData = z.infer<typeof createJobSchema>;

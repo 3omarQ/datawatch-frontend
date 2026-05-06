@@ -32,16 +32,22 @@ export default function CreateJobPage() {
   const form = useForm<CreateJobFormData>({
     resolver: zodResolver(createJobSchema),
     defaultValues: CREATE_JOB_DEFAULTS,
+    // Keep user input intact across re-renders and validation runs.
+    shouldUnregister: false,
   });
 
-  const { handleSubmit, formState: { isSubmitting } } = form;
+  const { handleSubmit, formState: { isSubmitting, errors } } = form;
+
+  // Surface top-level validation errors as a toast so the user knows
+  // something is wrong even if the relevant field is scrolled out of view.
+  const onInvalid = () => {
+    toast.error("Check the form for errors before submitting.");
+  };
 
   const onSubmit = async (data: CreateJobFormData) => {
     try {
-      // Step 1 — find or create target URL
       const targetUrl = await jobService.findOrCreateTargetUrl({ url: data.url });
 
-      // Step 2 — create datapoint
       const datapoint = await jobService.createDatapoint({
         name: data.name,
         path: data.datapointPath,
@@ -51,7 +57,6 @@ export default function CreateJobPage() {
         ...(data.maxPages ? { maxPages: data.maxPages } : {}),
       });
 
-      // Step 3 — create job, backend handles all scheduling
       const job = await jobService.createJob({
         datapointId: datapoint.id,
         definition: "",
@@ -83,7 +88,7 @@ export default function CreateJobPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8 pb-16">
       <CreateJobFormHeader />
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate className="space-y-8">
         <JobBasicsSection form={form} />
         <Separator />
         <JobScheduleSection form={form} />
@@ -91,6 +96,14 @@ export default function CreateJobPage() {
         <JobNotificationSection form={form} />
         <Separator />
         <JobOutputSection form={form} />
+
+        {/* Global form error summary (only shows when there are errors after submit attempt) */}
+        {Object.keys(errors).length > 0 && (
+          <p className="text-xs text-destructive text-center">
+            Some fields need attention — scroll up to review.
+          </p>
+        )}
+
         <div className="flex items-center justify-end gap-3 pt-2">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
