@@ -6,13 +6,14 @@ import { PageHeader } from "@/components/dashboard/shared/PageHeader";
 import { FilterBar, SortOption, FilterOption } from "@/components/dashboard/shared/FilterBar";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { CreateJobButton } from "@/components/dashboard/shared/CreateJobButton";
+import { PageLoadingState } from "@/components/dashboard/shared/PageLoadingState";
+import { PageErrorState } from "@/components/dashboard/shared/PageErrorState";
 import { datapointColumns } from "@/components/dashboard/datapointspage/columns";
 import { datapointService } from "@/services/datapoints.service";
 
 export default function DatapointsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [sort, setSort] = useState<SortOption>("latest");
   const [targetValue, setTargetValue] = useState<FilterOption | null>(() => {
@@ -20,7 +21,7 @@ export default function DatapointsPage() {
     return t ? { id: t, label: t } : null;
   });
 
-  const { data: datapoints = [], isLoading } = useQuery({
+  const { data: datapoints = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["datapoints"],
     queryFn: () => datapointService.getAll(),
   });
@@ -46,17 +47,10 @@ export default function DatapointsPage() {
         (d) => (d.targetUrl.baseUrl ?? d.targetUrl.url) === targetValue.id
       )
       : [...datapoints];
-
     result.sort((a, b) => {
-      if (sort === "alphabetical") {
-        return a.name.localeCompare(b.name);
-      }
-
-      return (
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      if (sort === "alphabetical") return a.name.localeCompare(b.name);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-
     return result;
   }, [datapoints, sort, targetValue]);
 
@@ -81,12 +75,8 @@ export default function DatapointsPage() {
           action: <CreateJobButton size="sm" />,
         };
 
-  if (isLoading)
-    return (
-      <div className="py-24 text-center text-sm text-muted-foreground">
-        Loading datapoints...
-      </div>
-    );
+  if (isLoading) return <PageLoadingState variant="table" />;
+  if (isError) return <PageErrorState error={error} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

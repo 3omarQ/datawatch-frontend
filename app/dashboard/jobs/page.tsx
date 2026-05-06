@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/dashboard/shared/PageHeader";
 import { FilterBar, SortOption } from "@/components/dashboard/shared/FilterBar";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { CreateJobButton } from "@/components/dashboard/shared/CreateJobButton";
+import { PageLoadingState } from "@/components/dashboard/shared/PageLoadingState";
+import { PageErrorState } from "@/components/dashboard/shared/PageErrorState";
 import { jobColumns } from "@/components/dashboard/jobspage/columns";
 import { jobService } from "@/services/jobs.service";
 import { JobStatus } from "@/types/dashboard.types";
@@ -14,11 +16,10 @@ export default function JobsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const statusParam = searchParams.get("status") as JobStatus | null;
-
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [sort, setSort] = useState<SortOption>("latest");
 
-  const { data: jobs = [], isLoading } = useQuery({
+  const { data: jobs = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["jobs"],
     queryFn: () => jobService.getAll(),
   });
@@ -33,17 +34,12 @@ export default function JobsPage() {
     const result = statusParam
       ? jobs.filter((j) => j.status === statusParam)
       : [...jobs];
-
     result.sort((a, b) => {
       if (sort === "alphabetical") {
         return a.datapoint.name.localeCompare(b.datapoint.name);
       }
-
-      return (
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-
     return result;
   }, [jobs, sort, statusParam]);
 
@@ -68,12 +64,8 @@ export default function JobsPage() {
           action: <CreateJobButton size="sm" />,
         };
 
-  if (isLoading)
-    return (
-      <div className="py-24 text-center text-sm text-muted-foreground">
-        Loading jobs...
-      </div>
-    );
+  if (isLoading) return <PageLoadingState variant="table" />;
+  if (isError) return <PageErrorState error={error} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">
@@ -87,7 +79,7 @@ export default function JobsPage() {
         sort={sort}
         onSearchChange={setSearch}
         onSortChange={setSort}
-        searchPlaceholder='Search jobs...'
+        searchPlaceholder="Search jobs..."
         activeStatus={statusParam}
         onStatusClear={clearStatus}
       />

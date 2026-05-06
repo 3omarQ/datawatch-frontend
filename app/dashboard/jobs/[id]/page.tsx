@@ -9,11 +9,15 @@ import { MetadataSection } from "@/components/dashboard/job-detail/JobMetadataSe
 import { NotificationsSection } from "@/components/dashboard/job-detail/NotificationsSection";
 import { ScheduleSection } from "@/components/dashboard/job-detail/ScheduleSection";
 import { TargetUrlSection } from "@/components/dashboard/job-detail/TargetURLSection";
+import { PageLoadingState } from "@/components/dashboard/shared/PageLoadingState";
+import { PageErrorState } from "@/components/dashboard/shared/PageErrorState";
+import { PageNotFoundState } from "@/components/dashboard/shared/PageNotFoundState";
 import apiClient from "@/lib/api-client";
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: job, isLoading } = useQuery<Job>({
+
+  const { data: job, isLoading, isError, error, refetch } = useQuery<Job>({
     queryKey: ["job", id],
     queryFn: async () => {
       const { data } = await apiClient.get(`/jobs/${id}`);
@@ -21,14 +25,9 @@ export default function JobDetailPage() {
     },
   });
 
-  if (isLoading)
-    return (
-      <div className="py-24 text-center text-sm text-muted-foreground">
-        Loading job...
-      </div>
-    );
-
-  if (!job) return null;
+  if (isLoading) return <PageLoadingState variant="detail" />;
+  if (isError) return <PageErrorState error={error} onRetry={refetch} />;
+  if (!job) return <PageNotFoundState entity="job" backHref="/dashboard/jobs" />;
 
   return (
     <div className="space-y-6 pb-16">
