@@ -66,12 +66,12 @@ export function UserMenu({ user }: UserMenuProps) {
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild className="gap-2.5 cursor-pointer">
+        {/* <DropdownMenuItem asChild className="gap-2.5 cursor-pointer">
           <Link href="/support">
             <HeadphonesIcon />
             Support
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
 
         <DropdownMenuSeparator />
 

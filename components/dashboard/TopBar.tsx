@@ -25,11 +25,11 @@ export function TopBar({
         <TopBarLogo />
         <TopBarNavigationTabs />
         <div className="ml-auto flex items-center gap-3">
-          <WorkspaceSwitcher
+          {/* <WorkspaceSwitcher
             workspaces={workspaces}
             currentWorkspace={currentWorkspace}
             onWorkspaceChange={onWorkspaceChange}
-          />
+          /> */}
           <NotificationBell />
           <UserMenu user={user} />
         </div>

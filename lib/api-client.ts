@@ -3,7 +3,7 @@ import { clearAuthSession, redirectToSignIn } from "@/lib/auth-session";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
-  timeout: 20000,
+
   headers: {
     "Content-Type": "application/json",
   },

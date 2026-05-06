@@ -1,4 +1,7 @@
+"use client";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 type PageLoadingVariant = "table" | "detail" | "grid";
 
@@ -123,6 +126,15 @@ function GridLoadingSkeleton() {
 }
 
 export function PageLoadingState({ variant = "table" }: PageLoadingStateProps) {
+	const [showNote, setShowNote] = useState(false);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setShowNote(true);
+		}, 3000);
+		return () => clearTimeout(timer);
+	}, []);
+
 	const skeleton =
 		variant === "detail" ? <DetailLoadingSkeleton /> :
 			variant === "grid" ? <GridLoadingSkeleton /> :
@@ -131,7 +143,7 @@ export function PageLoadingState({ variant = "table" }: PageLoadingStateProps) {
 	return (
 		<div>
 			{skeleton}
-			{SLOW_START_NOTE}
+			{showNote && SLOW_START_NOTE}
 		</div>
 	);
 }
